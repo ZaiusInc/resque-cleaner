@@ -10,12 +10,13 @@ module ResqueCleaner
 
     # Pagination helper for list page.
     class Paginate
+      DEFAULT_PAGE_SIZE = 20
       attr_accessor :page_size, :page, :jobs, :url
-      def initialize(jobs, url, page = 1, _page_size = 20)
+      def initialize(jobs, url, page = 1, page_size = DEFAULT_PAGE_SIZE)
         @jobs = jobs
         @url = url
         @page = !page || page < 1 ? 1 : page
-        @page_size = 20
+        @page_size = page_size.positive? ? page_size : DEFAULT_PAGE_SIZE
       end
 
       def first_index
