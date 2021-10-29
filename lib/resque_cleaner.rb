@@ -37,7 +37,8 @@ module Resque
 
       # Stats by date.
       def stats_by_date(&block)
-        jobs, stats = select(&block), {}
+        jobs = select(&block)
+        stats = {}
         jobs.each do |job|
           date = job["failed_at"][0,10]
           stats[date] ||= 0
@@ -50,7 +51,8 @@ module Resque
 
       # Stats by class.
       def stats_by_class(&block)
-        jobs, stats = select(&block), {}
+        jobs = select(&block)
+        stats = {}
         jobs.each do |job|
           klass = job["payload"] && job["payload"]["class"] ? job["payload"]["class"] : "UNKNOWN"
           stats[klass] ||= 0
@@ -63,11 +65,26 @@ module Resque
 
       # Stats by exception.
       def stats_by_exception(&block)
-        jobs, stats = select(&block), {}
+        jobs = select(&block)
+        stats = {}
         jobs.each do |job|
-          exception = job["exception"]
+          exception = job['exception']
           stats[exception] ||= 0
           stats[exception] += 1
+        end
+
+        print_stats(stats) if print?
+        stats
+      end
+
+      # Stats by exception.
+      def stats_by_queue(&block)
+        jobs = select(&block)
+        stats = {}
+        jobs.each do |job|
+          queue = job['queue']
+          stats[queue] ||= 0
+          stats[queue] += 1
         end
 
         print_stats(stats) if print?
@@ -201,7 +218,7 @@ module Resque
       # Through the Limiter class, you accesses only the last x(default 1000)
       # jobs.
       class Limiter
-        @@default_maximum ||= 1000
+        @@default_maximum ||= 10_000
 
         class << self
           def default_maximum

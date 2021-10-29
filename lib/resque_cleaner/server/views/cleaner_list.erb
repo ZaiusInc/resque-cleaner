@@ -3,17 +3,20 @@
 <!-- Many code was copied from failed.erb of the original resque -->
 <div class="cleaner">
   <div class="title clearfix">
-    <h1>Failed Jobs</h1>
+    <h1>Failed Jobs Cleaner</h1>
   </div>
 
   <div class="clearfix">
     <div class="control_panel sub_header">
       <form method="get">
         <span class="class_filter">
-          Class: <%= class_filter("filter_class","c",@klasses,@klass)%>
+          Queue: <%= simple_select("filter_class","queue",@queues,@queue)%>
+        </span>
+        <span class="class_filter">
+          Class: <%= simple_select("filter_class","c",@klasses,@klass)%>
         </span>
         <span class="exception_filter">
-          Exception: <%= exception_filter("filter_class","ex",@exceptions,@exception)%>
+          Exception: <%= simple_select("filter_class","ex",@exceptions,@exception)%>
         </span>
         <span class="time_filter">
           From: <%= time_filter("filter_from","f",@from)%>
@@ -38,6 +41,7 @@
           <input type="hidden" name="t" value="<%=@to%>" />
           <input type="hidden" name="p" value="<%=@paginate.page%>" />
           <input type="hidden" name="ex" value="<%=@exception%>" />
+          <input type="hidden" name="queue" value="<%=@queue%>" />
           <input type="hidden" name="regex" value="<%=Rack::Utils.escape_html(@regex)%>" />
           <select id="form_action" name="action">
             <option id="default_option" value="" selected="selected">-- Select Action --</option>

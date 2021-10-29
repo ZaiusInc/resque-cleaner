@@ -1,6 +1,16 @@
 <%= erb File.read(ResqueCleaner::Server.erb_path("_cleaner_styles.erb")) %>
 
 <div class="cleaner">
+
+  <div class="title clearfix">
+    <h1>Group by queue</h1>
+  </div>
+
+  <%= erb(
+        File.read(ResqueCleaner::Server.erb_path("_stats.erb")),
+        locals: {q: 'queue', type: 'queue'}
+      ) %>
+
   <div class="title clearfix">
     <h1>Group by class</h1>
   </div>

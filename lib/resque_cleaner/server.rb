@@ -77,22 +77,12 @@ module ResqueCleaner
             html += "</select>"
           end
 
-          def class_filter(id, name, klasses, value)
+          def simple_select(id, name, options, value)
             html = "<select id=\"#{id}\" name=\"#{name}\">"
             html += "<option value=\"\">-</option>"
-            klasses.each do |k|
-              selected = k == value ? 'selected="selected"' : ''
-              html += "<option #{selected} value=\"#{k}\">#{k}</option>"
-            end
-            html += "</select>"
-          end
-
-          def exception_filter(id, name, exceptions, value)
-            html = "<select id=\"#{id}\" name=\"#{name}\">"
-            html += "<option value=\"\">-</option>"
-            exceptions.each do |ex|
-              selected = ex == value ? 'selected="selected"' : ''
-              html += "<option #{selected} value=\"#{ex}\">#{ex}</option>"
+            options.each do |option|
+              selected = option == value ? 'selected="selected"' : ''
+              html += "<option #{selected} value=\"#{option}\">#{option}</option>"
             end
             html += "</select>"
           end
@@ -114,19 +104,22 @@ module ResqueCleaner
           load_cleaner_filter
 
           @jobs = cleaner.select
-          @stats = { :klass => {}, :exception => {} }
+          @stats = { klass: {}, exception: {}, queue: {} }
           @total = Hash.new(0)
           @jobs.each do |job|
             payload = job["payload"] || {}
             klass = payload["class"] || 'UNKNOWN'
             exception = job["exception"] || 'UNKNOWN'
+            queue = job['queue'] || 'UNKNOWN'
             failed_at = Time.parse job["failed_at"]
             @stats[:klass][klass] ||= Hash.new(0)
             @stats[:exception][exception] ||= Hash.new(0)
+            @stats[:queue][queue] ||= Hash.new(0)
 
             [
               @stats[:klass][klass],
               @stats[:exception][exception],
+              @stats[:queue][queue],
               @total
             ].each do |stat|
               stat[:total] += 1
@@ -154,6 +147,7 @@ module ResqueCleaner
 
           @klasses = cleaner.stats_by_class.keys
           @exceptions = cleaner.stats_by_exception.keys
+          @queues = cleaner.stats_by_queue.keys
           @count = cleaner.select(&block).size
 
           erb File.read(ResqueCleaner::Server.erb_path('cleaner_list.erb'))
@@ -174,8 +168,8 @@ module ResqueCleaner
           @count =
             case params[:action]
             when "clear" then cleaner.clear(&block)
-            when "retry_and_clear" then cleaner.requeue(true,&block)
-            when "retry" then cleaner.requeue(false,{},&block)
+            when "retry_and_clear" then cleaner.requeue(true, &block)
+            when "retry" then cleaner.requeue(false, {}, &block)
             end
 
           erb File.read(ResqueCleaner::Server.erb_path('cleaner_exec.erb'))
@@ -216,11 +210,12 @@ module ResqueCleaner
     end
 
     def load_cleaner_filter
-      @from = params[:f]=="" ? nil : params[:f]
-      @to = params[:t]=="" ? nil : params[:t]
-      @klass = params[:c]=="" ? nil : params[:c]
-      @exception = params[:ex]=="" ? nil : params[:ex]
-      @regex = params[:regex]=="" ? nil : params[:regex]
+      @from = params[:f] == "" ? nil : params[:f]
+      @to = params[:t] == "" ? nil : params[:t]
+      @klass = params[:c] == "" ? nil : params[:c]
+      @exception = params[:ex] == "" ? nil : params[:ex]
+      @queue = params[:queue] == "" ? nil : params[:queue]
+      @regex = params[:regex] == "" ? nil : params[:regex]
     end
 
     def build_urls
@@ -229,19 +224,21 @@ module ResqueCleaner
         ex: @exception,
         f: @from,
         t: @to,
-        regex: @regex
-      }.map {|key,value| "#{key}=#{URI.encode(value.to_s)}"}.join("&")
+        regex: @regex,
+        queue: @queue
+      }.map { |key,value| "#{key}=#{URI.encode(value.to_s)}"}.join("&" )
 
       @list_url = "cleaner_list?#{params}"
       @dump_url = "cleaner_dump?#{params}"
     end
 
     def filter_block
-      block = lambda{|j|
+      lambda{|j|
         (!@from || j.after?(hours_ago(@from))) &&
         (!@to || j.before?(hours_ago(@to))) &&
         (!@klass || j.klass?(@klass)) &&
         (!@exception || j.exception?(@exception)) &&
+        (!@queue || j.queue?(@queue)) &&
         (!@sha1 || @sha1[Digest::SHA1.hexdigest(j.to_json)]) &&
         (!@regex || j.to_s =~ /#{@regex}/)
       }
