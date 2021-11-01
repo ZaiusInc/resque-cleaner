@@ -9,7 +9,7 @@ module Resque
     class ResqueCleaner
       # ResqueCleaner fetches all elements from Redis and checks them
       # by linear when filtering them. Since there is a performance concern,
-      # ResqueCleaner handles only the latest x(default 1000) jobs.
+      # ResqueCleaner handles only the latest x(for e.g. 1000) jobs.
       #
       # You can change the value through limiter attribute.
       # e.g. cleaner.limiter.maximum = 5000
@@ -211,8 +211,7 @@ module Resque
         end
       end
 
-      # Through the Limiter class, you accesses only the last x(default 1000)
-      # jobs.
+      # Through the Limiter class, you accesses only the last x jobs
       class Limiter
         @@default_maximum ||= 10_000
 

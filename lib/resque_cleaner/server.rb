@@ -103,7 +103,7 @@ module ResqueCleaner
           load_cleaner_filter
 
           @jobs = cleaner.select
-          @stats = { klass: {}, exception: {}, queue: {} }
+          @stats = { klass: {}, exception: {}, queue: {}, queue_class: {} }
           @total = Hash.new(0)
           @jobs.each do |job|
             payload = job['payload'] || {}
@@ -114,11 +114,12 @@ module ResqueCleaner
             @stats[:klass][klass] ||= Hash.new(0)
             @stats[:exception][exception] ||= Hash.new(0)
             @stats[:queue][queue] ||= Hash.new(0)
-
+            @stats[:queue_class]["#{queue}-#{klass}"] ||= Hash.new(0)
             [
               @stats[:klass][klass],
               @stats[:exception][exception],
               @stats[:queue][queue],
+              @stats[:queue_class]["#{queue}-#{klass}"],
               @total
             ].each do |stat|
               stat[:total] += 1
