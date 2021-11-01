@@ -111,15 +111,16 @@ module ResqueCleaner
             exception = job['exception'] || 'UNKNOWN'
             queue = job['queue'] || 'UNKNOWN'
             failed_at = Time.parse job['failed_at']
+            queue_klass = "#{queue}-#{klass}"
             @stats[:klass][klass] ||= Hash.new(0)
             @stats[:exception][exception] ||= Hash.new(0)
             @stats[:queue][queue] ||= Hash.new(0)
-            @stats[:queue_class]["#{queue}-#{klass}"] ||= Hash.new(0)
+            @stats[:queue_class][queue_klass] ||= Hash.new(0)
             [
               @stats[:klass][klass],
               @stats[:exception][exception],
               @stats[:queue][queue],
-              @stats[:queue_class]["#{queue}-#{klass}"],
+              @stats[:queue_class][queue_klass],
               @total
             ].each do |stat|
               stat[:total] += 1
