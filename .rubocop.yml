@@ -1,0 +1,182 @@
+AllCops:
+  Exclude:
+    - tmp/**/*
+    - bin/*
+    - db/schema.rb
+    - node_modules/**/*
+    - bower_components/**/*
+  TargetRubyVersion: 2.3
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: false
+
+Style/FirstParameterIndentation:
+  EnforcedStyle: consistent
+
+Style/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Style/AlignHash:
+  EnforcedColonStyle: table
+  EnforcedHashRocketStyle: table
+
+Style/BracesAroundHashParameters:
+  Enabled: true
+  EnforcedStyle: context_dependent
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/SpaceInsideHashLiteralBraces:
+  Enabled: false
+  EnforcedStyle: no_space
+
+Style/SpaceInsideBrackets:
+  Enabled: false
+
+Style/SpaceBeforeFirstArg:
+  Enabled: false
+
+Lint/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+Style/ClosingParenthesisIndentation:
+  Enabled: false
+
+# since dates are numbers this gets weird
+Style/NumericLiterals:
+  Enabled: false
+
+Style/UnneededPercentQ:
+  Enabled: false
+
+Style/IndentHash:
+  EnforcedStyle: consistent
+
+Style/WordArray:
+  Enabled: false
+
+Style/Lambda:
+  Enabled: false
+
+Style/SpecialGlobalVars:
+  Enabled: false
+
+# style/next cop encourages using `next if .. \n do stuff` in place of an `if .. \n do stuff` at the end of a loop
+# sometimes it makes sense, more often it makes the code harder to read
+Style/Next:
+  Enabled: false
+
+Style/SignalException:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Lint/HandleExceptions:
+  Enabled: false
+
+Lint/RescueException:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Style/EachWithObject:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  CountComments: false
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/SingleLineBlockParams:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/ExtraSpacing:
+  AllowForAlignment: true
+
+Style/EmptyElse:
+  EnforcedStyle: empty
+
+Style/IfInsideElse:
+  Enabled: false
+
+Style/TrailingUnderscoreVariable:
+  AllowNamedUnderscoreVariables: true
+
+Style/SpaceInsideArrayPercentLiteral:
+  Enabled: false
+
+Style/SpaceAroundOperators:
+  AllowForAlignment: true
+
+Style/IndentArray:
+  EnforcedStyle: consistent
+
+Style/MultilineArrayBraceLayout:
+  SupportedStyles:
+    - new_line
+    - symmetrical
+
+Style/MultilineHashBraceLayout:
+  SupportedStyles:
+    - new_line
+    - symmetrical
+
+Style/ParallelAssignment:
+  Enabled: false
+
+Style/NestedTernaryOperator:
+  Enabled: false
+
+Style/MultilineMethodCallBraceLayout:
+  SupportedStyles:
+    - new_line
+    - symmetrical
+
+# yeah, yeah...
+Style/GlobalVars:
+  Enabled: false
+
+Style/TernaryParentheses:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/ParameterLists:
+  Max: 6
+
+Style/FileName:
+  Exclude:
+    - 'lib/resque-cleaner.rb'
+
+Style/FormatString:
+  Enabled: false
