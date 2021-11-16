@@ -87,12 +87,23 @@ module ResqueCleaner
           end
 
           def show_job_args(args)
-            Array(args).map(&:inspect).join("\n")
+            # Same format as resque gem
+            Array(args).map(&:to_yaml).join("\n")
+          rescue
+            # Binary
+            args.to_s
           end
 
           def text_filter(id, name, value)
             html = "<input id=\"#{id}\"  type=\"text\" name=\"#{name}\" value=\"#{value}\">"
             html + '</input>'
+          end
+
+          def job_sha(job)
+            Digest::SHA1.hexdigest(job.to_json)
+          rescue
+            # Binary
+            Digest::SHA1.hexdigest(job.to_s)
           end
         end
 
@@ -239,7 +250,7 @@ module ResqueCleaner
           (!@klass || j.klass?(@klass)) &&
           (!@exception || j.exception?(@exception)) &&
           (!@queue || j.queue?(@queue)) &&
-          (!@sha1 || @sha1[Digest::SHA1.hexdigest(j.to_json)]) &&
+          (!@sha1 || @sha1[job_sha(j)]) &&
           (!@regex || j.to_s =~ /#{@regex}/)
       end
     end
