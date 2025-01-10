@@ -1,4 +1,5 @@
 require 'yaml'
+require 'cgi'
 
 # Extends Resque Web Based UI.
 # Structure has been borrowed from ResqueScheduler.
@@ -237,7 +238,7 @@ module ResqueCleaner
         t:     @to,
         regex: @regex,
         queue: @queue
-      }.map { |key, value| "#{key}=#{URI.encode(value.to_s)}" }.join('&')
+      }.map { |key, value| "#{key}=#{CGI.escape(value.to_s)}" }.join('&')
 
       @list_url = "cleaner_list?#{params}"
       @dump_url = "cleaner_dump?#{params}"
