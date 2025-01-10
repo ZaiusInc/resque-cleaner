@@ -11,7 +11,7 @@
   </tr>
   <% @stats[type.to_sym].each do |field,count| %>
     <tr>
-      <% filter = "#{ q.map.with_index{ |param, index| param + '=' + URI.encode(field.split('-')[index])}.join('&') }" %>
+      <% filter = "#{ q.map.with_index{ |param, index| param + '=' + CGI.escape(field.split('-')[index])}.join('&') }" %>
       <td><%= field.split('-').first %></td>
       <td><%= field.split('-').last %></td>
       <td class="number">
